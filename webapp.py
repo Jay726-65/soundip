@@ -58,3 +58,34 @@ if st.button("🔊 Audio Banao"):
                 file_name="meri_awaaz.mp3",
                 mime="audio/mp3"
             )
+# --- SIDEBAR ADS (Affiliate Marketing) ---
+st.sidebar.markdown("---") # Separator line
+st.sidebar.header("🚀 Upgrade Your Voice")
+
+st.sidebar.info(
+    "Want ultra-realistic, celebrity-like voices? "
+    "Try **ElevenLabs** (The World's Best AI Voice)."
+)
+
+# Ye button hai tumhare link ke saath
+st.sidebar.markdown(
+    """
+    <a href="https://try.elevenlabs.io/artjufeglrrl" target="_blank" style="text-decoration: none;">
+        <button style="
+            width: 100%;
+            background-color: #FF4B4B;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;">
+            👉 Try Premium Voices
+        </button>
+    </a>
+    """,
+    unsafe_allow_html=True
+)
+
+st.sidebar.caption("Support Soundip by using this link! ❤️")
