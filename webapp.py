@@ -283,5 +283,137 @@ if st.button("🎭 Generate Conversation"):
                 )
             except Exception as e:
                 st.error(f"Error: {e}")
+import streamlit as st
+import edge_tts
+import asyncio
+import os
 
+# --- PAGE CONFIGURATION ---
+st.set_page_config(page_title="Soundip Studio", page_icon="🎙️", layout="wide")
+
+# --- HEADER ---
+st.title("🎙️ Soundip AI Studio")
+st.markdown("### Free Unlimited Text-to-Speech")
+
+# --- SIDEBAR (Global Settings) ---
+st.sidebar.header("🚀 Support & Pro Voices")
+st.sidebar.info("Want ultra-realistic celebrity voices?")
+st.sidebar.markdown(
+    """<a href="https://try.elevenlabs.io/artjufeglrrl" target="_blank">
+    <button style="width:100%; background:#ff4b4b; color:white; border:none; padding:10px; border-radius:5px; font-weight:bold;">
+    ⚡ Try ElevenLabs (Premium)</button></a>""", 
+    unsafe_allow_html=True
+)
+st.sidebar.caption("Soundip - Made by Jay Kevat")
+
+# --- TABS CREATION ---
+tab1, tab2 = st.tabs(["👤 Single Voice (Emotions)", "🎭 Conversation (Dialogue)"])
+
+# ==========================================
+# TAB 1: SINGLE VOICE (EMOTIONS WALA)
+# ==========================================
+with tab1:
+    st.header("Single Voice Generator")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        gender = st.radio("Awaaz kiski chahiye?", ["👩 Swara (Hindi Female)", "👨 Prabhat (English/Hindi Male)"])
+        if "Swara" in gender:
+            VOICE = "hi-IN-SwaraNeural"
+        else:
+            VOICE = "en-IN-PrabhatNeural"
+            
+    with col2:
+        mood = st.selectbox(
+            "Mood/Style",
+            ["Normal", "😊 Happy (Tez)", "😔 Sad (Dheere)", "👻 Scary (Daraawana)", "🤖 Robot"]
+        )
+
+    # Mood Logic
+    rate_str = "+0%"
+    pitch_str = "+0Hz"
+
+    if "Happy" in mood:
+        rate_str = "+15%"
+        pitch_str = "+5Hz"
+    elif "Sad" in mood:
+        rate_str = "-15%"
+        pitch_str = "-5Hz"
+    elif "Scary" in mood:
+        rate_str = "-25%"
+        pitch_str = "-15Hz"
+    elif "Robot" in mood:
+        rate_str = "-5%"
+        pitch_str = "+0Hz"
+
+    # Input Text
+    text_input = st.text_area("Yahan likho (Single Voice ke liye):", height=150, key="single_text")
+
+    if st.button("🔊 Audio Banao (Single)", type="primary"):
+        if not text_input:
+            st.warning("Kuch likho toh sahi!")
+        else:
+            with st.spinner('Generating...'):
+                async def gen_single():
+                    communicate = edge_tts.Communicate(text_input, VOICE, rate=rate_str, pitch=pitch_str)
+                    await communicate.save("single_audio.mp3")
+                
+                asyncio.run(gen_single())
+                
+                st.success(f"✅ Generated in {mood} mode!")
+                st.audio("single_audio.mp3")
+                with open("single_audio.mp3", "rb") as f:
+                    st.download_button("📥 Download MP3", f, file_name="soundip_single.mp3")
+
+# ==========================================
+# TAB 2: CONVERSATION (LADKA-LADKI WALA)
+# ==========================================
+with tab2:
+    st.header("Conversation Maker (Multi-Speaker)")
+    st.info("💡 **Trick:** Likhne se pehle `[Male]:` ya `[Female]:` lagayein.")
+    
+    script_input = st.text_area(
+        "Script Yahan Likho:", 
+        height=200,
+        value="[Male]: Suno, aaj khane mein kya hai?\n[Female]: Aaj maine tumhari pasand ka Rajma Chawal banaya hai.\n[Male]: Waah! Mazaa aa gaya.",
+        key="conv_text"
+    )
+
+    if st.button("🎭 Conversation Banao"):
+        if not script_input:
+            st.warning("Script khali hai!")
+        else:
+            with st.spinner('Mixing Audio...'):
+                async def gen_conv():
+                    lines = script_input.split('\n')
+                    final_audio = b""
+                    
+                    for line in lines:
+                        if not line.strip(): continue
+                        
+                        # Default settings
+                        voice = "en-IN-PrabhatNeural"
+                        text_part = line
+                        
+                        if "[Male]:" in line:
+                            voice = "en-IN-PrabhatNeural"
+                            text_part = line.replace("[Male]:", "").strip()
+                        elif "[Female]:" in line:
+                            voice = "hi-IN-SwaraNeural"
+                            text_part = line.replace("[Female]:", "").strip()
+                        
+                        # Generate segment
+                        communicate = edge_tts.Communicate(text_part, voice)
+                        await communicate.save("temp.mp3")
+                        with open("temp.mp3", "rb") as f:
+                            final_audio += f.read()
+                    
+                    return final_audio
+
+                audio_data = asyncio.run(gen_conv())
+                
+                st.success("✅ Conversation Ready!")
+                st.audio(audio_data, format='audio/mp3')
+                st.download_button("📥 Download Conversation", audio_data, file_name="soundip_chat.mp3")
 
