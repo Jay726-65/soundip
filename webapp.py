@@ -14,7 +14,7 @@ st.sidebar.caption("Soundip - Made by Jay Kevat")
 st.sidebar.markdown("---")
 st.sidebar.info("Want Ultra-Realistic Voices?")
 st.sidebar.markdown(
-    """<a href="https://try.elevenlabs.io/artjufeglrrl" target="_blank">
+    """<https://try.elevenlabs.io/jayy" target="_blank">
     <button style="width:100%; background:#ff4b4b; color:white; border:none; padding:10px; border-radius:5px; font-weight:bold;">
     ⚡ Try ElevenLabs (Premium)</button></a>""", 
     unsafe_allow_html=True
