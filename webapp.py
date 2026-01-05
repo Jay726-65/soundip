@@ -194,3 +194,94 @@ if st.button("🔊 Generate Audio", type="primary"):
 # Footer
 st.markdown("---")
 st.markdown("<center>Made with ❤️ by <b>Jay Kevat (Soundip)</b></center>", unsafe_allow_html=True)
+import streamlit as st
+import edge_tts
+import asyncio
+import os
+
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="Soundip Studio", page_icon="🎙️", layout="wide")
+
+st.title("🎙️ Soundip Studio: Multi-Speaker Support")
+st.markdown("---")
+
+# --- SIDEBAR ---
+st.sidebar.header("⚙️ Global Settings")
+st.sidebar.info("💡 **Tip:** Use `[Male]:` for Boy's voice and `[Female]:` for Girl's voice in your text.")
+
+# Affiliate Link (Paise kamane ke liye zaroori hai)
+st.sidebar.markdown("---")
+st.sidebar.header("🚀 Pro Voices")
+st.sidebar.markdown(
+    """<a href="https://try.elevenlabs.io/artjufeglrrl" target="_blank">
+    <button style="width:100%; background:#ff4b4b; color:white; border:none; padding:10px; border-radius:5px; font-weight:bold;">
+    ⚡ Get Celebrity Voices</button></a>""", 
+    unsafe_allow_html=True
+)
+
+# --- MAIN LOGIC ---
+st.subheader("📝 Script Writer")
+
+# Text Area
+text_input = st.text_area(
+    "Yahan script likho (Format dekho):", 
+    height=200,
+    value="[Male]: Arre suno, aaj mausam kaisa hai?\n[Female]: Bahut accha hai, chalo ghumne chalte hain!\n[Male]: Theek hai, main gaadi nikalta hoon."
+)
+
+# Function to process script
+async def generate_conversation(script):
+    lines = script.split('\n')
+    final_audio = b""
+    
+    for line in lines:
+        if not line.strip(): continue
+        
+        # Default Voice
+        voice = "en-IN-PrabhatNeural" 
+        text_to_speak = line
+        
+        # Detect Voice Tag
+        if "[Male]:" in line:
+            voice = "en-IN-PrabhatNeural"
+            text_to_speak = line.replace("[Male]:", "").strip()
+        elif "[Female]:" in line:
+            voice = "hi-IN-SwaraNeural"
+            text_to_speak = line.replace("[Female]:", "").strip()
+        
+        # Generate Audio Segment
+        communicate = edge_tts.Communicate(text_to_speak, voice)
+        temp_file = "temp_segment.mp3"
+        await communicate.save(temp_file)
+        
+        # Read bytes and append
+        with open(temp_file, "rb") as f:
+            final_audio += f.read()
+            
+    return final_audio
+
+# --- ACTION BUTTON ---
+if st.button("🎭 Generate Conversation"):
+    if not text_input:
+        st.warning("Kuch likho toh sahi!")
+    else:
+        with st.spinner("Creating Dialogue... (Wait karo)"):
+            try:
+                # Generate
+                audio_data = asyncio.run(generate_conversation(text_input))
+                
+                # Success
+                st.success("✅ Conversation Ready!")
+                st.audio(audio_data, format='audio/mp3')
+                
+                # Download
+                st.download_button(
+                    label="📥 Download Full Conversation",
+                    data=audio_data,
+                    file_name="soundip_dialogue.mp3",
+                    mime="audio/mp3"
+                )
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+
