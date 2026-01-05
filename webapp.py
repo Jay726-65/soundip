@@ -8,13 +8,15 @@ st.set_page_config(page_title="Soundip Studio", page_icon="🎙️", layout="wid
 # --- TITLE ---
 st.title("🎙️ Soundip AI Studio")
 
-# --- SIDEBAR (Sirf Ads aur Branding) ---
+# --- SIDEBAR (Ads & Branding) ---
 st.sidebar.header("🚀 Support Us")
 st.sidebar.caption("Soundip - Made by Jay Kevat")
 st.sidebar.markdown("---")
 st.sidebar.info("Want Ultra-Realistic Voices?")
+
+# --- UPDATED AFFILIATE LINK (JAYY) ---
 st.sidebar.markdown(
-    """<https://try.elevenlabs.io/jayy" target="_blank">
+    """<a href="https://try.elevenlabs.io/jayy" target="_blank">
     <button style="width:100%; background:#ff4b4b; color:white; border:none; padding:10px; border-radius:5px; font-weight:bold;">
     ⚡ Try ElevenLabs (Premium)</button></a>""", 
     unsafe_allow_html=True
@@ -29,7 +31,6 @@ tab1, tab2 = st.tabs(["👤 Single Voice (Emotions)", "🗣️ Conversation (2 P
 with tab1:
     st.subheader("Single Voice Generator")
     
-    # Is tab ki settings yahi rahengi (Sidebar mein nahi)
     col1, col2 = st.columns(2)
     with col1:
         voice_choice = st.radio("Awaaz Chuno:", ["👩 Swara (Hindi)", "👨 Prabhat (English/Hindi)"])
@@ -75,13 +76,13 @@ with tab1:
                 st.download_button("📥 Download MP3", f, file_name="soundip_single.mp3")
 
 # ==========================================
-# TAB 2: CONVERSATION (NEW SECTION)
+# TAB 2: CONVERSATION (CHAT MODE)
 # ==========================================
 with tab2:
     st.subheader("Multi-Speaker Conversation")
     st.info("💡 **Kaise use karein:** Likhne se pehle `[Male]:` ya `[Female]:` lagayein.")
     
-    # Default Example Script
+    # Example Script
     example_script = """[Male]: Suno, tumne Soundip try kiya?
 [Female]: Haan, ye toh kamaal ka tool hai!
 [Male]: Sahi mein, ab video banana kitna aasaan ho gaya hai."""
